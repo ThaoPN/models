@@ -34,7 +34,7 @@ def get_default_extract_count():
 
 
 def get_default_split_ratio():
-    return 0.1
+    return 0.3
 
 
 def create_example(entry, label_map_dict):
@@ -82,7 +82,8 @@ def create_example(entry, label_map_dict):
                 xmax.append(_xmax / width)
                 ymax.append(_ymax / height)
 
-                class_name = obj['name']
+                #class_name = obj['name']
+                class_name = 'traffic_sign'
                 classes_text.append(class_name.encode('utf8'))
                 classes.append(label_map_dict[class_name])
                 truncated.append(int(0))
@@ -149,7 +150,7 @@ def handle(files):
     arr = []
     for i in range(len(files)):
         imagesrc = str(files[i])
-        xml_file = imagesrc.replace('JPEGImages/', 'xml/')
+        xml_file = imagesrc.replace('images/', 'xml/')
         xml_file = xml_file.replace('.jpg', '.xml')
         if path.isfile(xml_file):
             arr.append([imagesrc, xml_file])
@@ -159,12 +160,12 @@ def handle(files):
 def check(d):
     files = []
     if path.isdir(d):
-        files = glob.glob(d + '/JPEGImages/*.jpg')
+        files = glob.glob(d + '/images/*.jpg')
     return files
 
 
 def load(d, count):
-    return compose(select(count), handle, check)(d)
+    return compose(handle, check)(d)
 
 
 def process(entries, output_dir, label_map, split_ratio):
@@ -247,7 +248,7 @@ def start():
     parser.add_argument(
         '-r',
         '--ratio',
-        help='Ratio of Training/Test set. Default 0.1 (9 train/1 eval)'
+        help='Ratio of Training/Test set. Default 0.3 (7 train/3 eval)'
     )
     args = parser.parse_args()
     if not args.dir:
